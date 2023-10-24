@@ -2,10 +2,15 @@ package com.papaya.osiris.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Black = Color(17, 17, 17, 255)
+val White = Color(255, 255, 255, 255)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Gray = Color(242, 242, 242, 255)
+val GrayBorder = Color(209, 209, 209, 255)
+val DarkGray = Color(169, 169, 169, 255)
+
+val LightGreen = Color(0, 219, 51, 255)
+val MediumGreen = Color(0, 168, 39, 255)
+val DarkGreen = Color(0, 92, 21, 255)
+
+val Wine = Color(128, 0, 0, 255)
