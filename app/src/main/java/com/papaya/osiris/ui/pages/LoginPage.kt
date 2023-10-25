@@ -33,12 +33,11 @@ fun LoginPage() {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .fillMaxWidth()
             .background(White)
             .padding(vertical = 0.dp, horizontal =  22.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().fillMaxWidth().padding(top = 96.dp),
+            modifier = Modifier.fillMaxSize().padding(top = 96.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(36.dp)
         ) {
