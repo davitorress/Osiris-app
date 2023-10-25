@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.papaya.osiris.ui.pages.LoginPage
+import com.papaya.osiris.ui.pages.RegisterPage
 import com.papaya.osiris.ui.theme.OsirisTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginPage()
+                    RegisterPage()
                 }
             }
         }
