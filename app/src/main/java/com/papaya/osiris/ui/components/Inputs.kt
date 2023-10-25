@@ -1,7 +1,11 @@
 package com.papaya.osiris.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,9 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.papaya.osiris.ui.theme.*
 
 @Composable
@@ -184,6 +191,50 @@ fun CheckboxInput(
     }
 }
 
+@Composable
+fun SearchInput(
+    text: String,
+    placeholder: String,
+    onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedTextField(
+        value = text,
+        onValueChange = onTextChange,
+        singleLine = true,
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = GrayBorder,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                style = MaterialTheme.typography.labelSmall
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Black,
+            cursorColor = GrayBorder,
+            focusedContainerColor = Gray,
+            unfocusedContainerColor = Gray,
+            focusedBorderColor = GrayBorder,
+            unfocusedBorderColor = GrayBorder,
+        ),
+        textStyle = MaterialTheme.typography.labelSmall.copy(
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal
+        ),
+        leadingIcon = {
+            Image(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(LightGreen)
+            )
+        },
+        shape = RoundedCornerShape(percent = 99),
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
 @Preview(showBackground = true, widthDp = 400)
 @Composable
 fun InputPreview() {
@@ -209,6 +260,20 @@ fun CheckboxPreview() {
             text = "Selecione a opção",
             checked = checked,
             onCheckedChange = { checked = it }
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 400)
+@Composable
+fun SearchInputPreview() {
+    var text by rememberSaveable { mutableStateOf("") }
+
+    OsirisTheme {
+        SearchInput(
+            text = text,
+            onTextChange = { text = it },
+            placeholder = "Busque por plantas ou receitas"
         )
     }
 }
