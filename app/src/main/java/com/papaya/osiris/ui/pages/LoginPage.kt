@@ -76,13 +76,13 @@ fun LoginPage() {
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
             ) {
                 Text(
-                    text = "Já possui uma conta?",
+                    text = "Não possui uma conta?",
                     color = MediumGreen,
                     style = MaterialTheme.typography.labelSmall
                 )
                 ThemedTextButton(
                     onClick = {  },
-                    text = "Entre aqui",
+                    text = "Crie aqui",
                     theme = ButtonTheme.Wine,
                     modifier = Modifier,
                     fontWeight = FontWeight.Black,
