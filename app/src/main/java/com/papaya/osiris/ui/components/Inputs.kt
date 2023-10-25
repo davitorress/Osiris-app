@@ -163,7 +163,7 @@ fun CheckboxInput(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
