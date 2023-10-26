@@ -16,10 +16,10 @@ class MainActivity : ComponentActivity() {
             OsirisTheme {
                 CardsCarousel(
                     listOf(
-                        Product("Item 1", "https://picsum.photos/128/196"),
-                        Product("Item 2", "https://picsum.photos/128/196"),
-                        Product("Item 3", "https://picsum.photos/128/196"),
-                        Product("Item 4", "https://picsum.photos/128/196"),
+                        Product("Item 1", "https://picsum.photos/400"),
+                        Product("Item 2", "https://picsum.photos/300"),
+                        Product("Item 3", "https://picsum.photos/700"),
+                        Product("Item 4", "https://picsum.photos/500"),
                     )
                 )
             }
