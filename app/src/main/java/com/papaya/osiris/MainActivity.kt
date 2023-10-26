@@ -3,10 +3,8 @@ package com.papaya.osiris
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import com.papaya.osiris.ui.components.CardsCarousel
+import com.papaya.osiris.ui.components.Product
 import com.papaya.osiris.ui.pages.LoginPage
 import com.papaya.osiris.ui.pages.RegisterPage
 import com.papaya.osiris.ui.theme.OsirisTheme
@@ -16,12 +14,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             OsirisTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    RegisterPage()
-                }
+                CardsCarousel(
+                    listOf(
+                        Product("Item 1", "https://picsum.photos/128/196"),
+                        Product("Item 2", "https://picsum.photos/128/196"),
+                        Product("Item 3", "https://picsum.photos/128/196"),
+                        Product("Item 4", "https://picsum.photos/128/196"),
+                    )
+                )
             }
         }
     }
