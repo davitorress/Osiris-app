@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.papaya.osiris.ui.theme.Black
 import com.papaya.osiris.ui.theme.DarkGreen
 import com.papaya.osiris.ui.theme.Gray
 import com.papaya.osiris.ui.theme.OsirisTheme
@@ -70,6 +71,26 @@ fun CardsCarousel(
     }
 }
 
+@Composable
+fun CardsSection(
+    title: String,
+    items: List<Product>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = title,
+            color = Black,
+            style = MaterialTheme.typography.titleSmall
+        )
+        CardsCarousel(items)
+    }
+}
+
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun CardItemPreview() {
@@ -87,6 +108,22 @@ fun CardsCarouselPreview() {
     OsirisTheme {
         CardsCarousel(
             listOf(
+                Product("Item 1", "https://picsum.photos/400"),
+                Product("Item 2", "https://picsum.photos/300"),
+                Product("Item 3", "https://picsum.photos/700"),
+                Product("Item 4", "https://picsum.photos/500"),
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 400, heightDp = 400)
+@Composable
+fun CardsSectionPreview() {
+    OsirisTheme {
+        CardsSection(
+            title = "Seção",
+            items = listOf(
                 Product("Item 1", "https://picsum.photos/400"),
                 Product("Item 2", "https://picsum.photos/300"),
                 Product("Item 3", "https://picsum.photos/700"),
