@@ -214,8 +214,8 @@ fun SearchInput(
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             cursorColor = GrayBorder,
-            focusedContainerColor = Gray,
-            unfocusedContainerColor = Gray,
+            focusedContainerColor = White,
+            unfocusedContainerColor = White,
             focusedBorderColor = GrayBorder,
             unfocusedBorderColor = GrayBorder,
         ),
