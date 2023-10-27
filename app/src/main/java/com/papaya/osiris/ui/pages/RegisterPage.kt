@@ -3,7 +3,8 @@ package com.papaya.osiris.ui.pages
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,76 +40,72 @@ fun RegisterPage() {
             .background(White)
             .padding(vertical = 0.dp, horizontal =  22.dp),
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 96.dp, bottom = 48.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(36.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(top = 96.dp, bottom = 48.dp)
         ) {
-            item {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(36.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.osiris_logo),
-                        contentDescription = "Osiris",
-                        alignment = Alignment.Center
-                    )
+            Image(
+                painter = painterResource(R.drawable.osiris_logo),
+                contentDescription = "Osiris",
+                alignment = Alignment.Center
+            )
 
-                    Column(verticalArrangement = Arrangement.spacedBy(26.dp)) {
-                        TextInput(
-                            text = nome,
-                            label = "Nome completo:",
-                            onTextChange = { nome = it },
-                            placeholder = "Digite o seu nome completo"
-                        )
-                        EmailInput(
-                            text = email,
-                            onTextChange = { email = it }
-                        )
-                        PasswordInput(
-                            text = senha,
-                            onTextChange = { senha = it }
-                        )
-                        PasswordInput(
-                            text = confirmarSenha,
-                            onTextChange = { confirmarSenha = it },
-                            label = "Confirmar senha:",
-                            placeholder = "Digite novamente a sua senha"
-                        )
-                        CheckboxInput(
-                            text = "Sou um agricultor",
-                            checked = isFarmer,
-                            onCheckedChange = { isFarmer = it }
-                        )
-                    }
+            Column(verticalArrangement = Arrangement.spacedBy(26.dp)) {
+                TextInput(
+                    text = nome,
+                    label = "Nome completo:",
+                    onTextChange = { nome = it },
+                    placeholder = "Digite o seu nome completo"
+                )
+                EmailInput(
+                    text = email,
+                    onTextChange = { email = it }
+                )
+                PasswordInput(
+                    text = senha,
+                    onTextChange = { senha = it }
+                )
+                PasswordInput(
+                    text = confirmarSenha,
+                    onTextChange = { confirmarSenha = it },
+                    label = "Confirmar senha:",
+                    placeholder = "Digite novamente a sua senha"
+                )
+                CheckboxInput(
+                    text = "Sou um agricultor",
+                    checked = isFarmer,
+                    onCheckedChange = { isFarmer = it }
+                )
+            }
 
-                    ThemedButton(
-                        onClick = {  },
-                        theme = ButtonTheme.Medium,
-                        text = "Cadastrar"
-                    )
+            ThemedButton(
+                onClick = {  },
+                theme = ButtonTheme.Medium,
+                text = "Cadastrar"
+            )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
-                    ) {
-                        Text(
-                            text = "Já possui uma conta?",
-                            color = MediumGreen,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        ThemedTextButton(
-                            onClick = {  },
-                            text = "Entre aqui",
-                            theme = ButtonTheme.Wine,
-                            modifier = Modifier,
-                            fontWeight = FontWeight.Black,
-                            textDecoration = TextDecoration.Underline
-                        )
-                    }
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
+            ) {
+                Text(
+                    text = "Já possui uma conta?",
+                    color = MediumGreen,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                ThemedTextButton(
+                    onClick = {  },
+                    text = "Entre aqui",
+                    theme = ButtonTheme.Wine,
+                    modifier = Modifier,
+                    fontWeight = FontWeight.Black,
+                    textDecoration = TextDecoration.Underline
+                )
             }
         }
     }
