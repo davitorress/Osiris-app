@@ -2,8 +2,6 @@ package com.papaya.osiris.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,11 +16,10 @@ import com.papaya.osiris.ui.theme.OsirisTheme
 fun BulletList(
     items: List<String>,
 ) {
-    LazyColumn(
+    Column(
         verticalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(top = 4.dp, bottom = 4.dp)
     ) {
-        items(items = items) {
+        items.forEach {
             Row(
                 modifier = Modifier.padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically

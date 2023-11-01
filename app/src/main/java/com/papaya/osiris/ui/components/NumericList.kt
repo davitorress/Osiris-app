@@ -1,9 +1,6 @@
 package com.papaya.osiris.ui.components
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,11 +15,10 @@ import com.papaya.osiris.ui.theme.OsirisTheme
 fun NumericList(
     items: List<String>
 ) {
-    LazyColumn(
+    Column(
         verticalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(top = 4.dp, bottom = 4.dp)
     ) {
-        itemsIndexed(items = items) {index, item ->
+        items.forEachIndexed {index, item ->
             Row(
                 modifier = Modifier.padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically
