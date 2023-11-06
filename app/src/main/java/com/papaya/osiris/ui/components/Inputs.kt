@@ -235,6 +235,49 @@ fun SearchInput(
     )
 }
 
+@Composable
+fun TextAreaInput(
+    label: String,
+    text: String,
+    placeholder: String,
+    onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth().wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = label,
+            color = MediumGreen,
+            style = MaterialTheme.typography.labelLarge
+        )
+        OutlinedTextField(
+            value = text,
+            onValueChange = onTextChange,
+            singleLine = false,
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = GrayBorder,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Black,
+                cursorColor = Black,
+                focusedContainerColor = Gray,
+                unfocusedContainerColor = Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
+            textStyle = MaterialTheme.typography.labelMedium,
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 100.dp)
+        )
+    }
+}
+
 @Preview(showBackground = true, widthDp = 400)
 @Composable
 fun InputPreview() {
@@ -274,6 +317,21 @@ fun SearchInputPreview() {
             text = text,
             onTextChange = { text = it },
             placeholder = "Busque por plantas ou receitas"
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 400)
+@Composable
+fun TextAreaInputPreview() {
+    var text by rememberSaveable { mutableStateOf("") }
+
+    OsirisTheme {
+        TextAreaInput(
+            label = "Textarea",
+            text = text,
+            onTextChange = { text = it },
+            placeholder = "Digite um texto grande",
         )
     }
 }
