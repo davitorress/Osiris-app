@@ -22,7 +22,7 @@ class Link(val text: String, val icon: ImageVector, val activeIcon: ImageVector)
 val userLinks: List<Link> = listOf(
     Link("Home", Icons.Outlined.Home, Icons.Filled.Home),
     Link("PANCs", Icons.Outlined.Eco, Icons.Filled.Eco),
-    Link("Receitas", Icons.Outlined.MenuBook, Icons.Filled.MenuBook),
+    Link("Receitas", Icons.Outlined.Book, Icons.Filled.MenuBook),
     Link("Perfil", Icons.Outlined.Person, Icons.Filled.Person),
 )
 
@@ -41,7 +41,7 @@ fun NavBar(
     ) {
         links.forEachIndexed { index, item ->
             NavigationBarItem(
-                selected = selectedItem == index,
+                selected = true,
                 onClick = { onSelectItem(index) },
                 icon = {
                     if(selectedItem == index) Icon(item.activeIcon, contentDescription = null)
