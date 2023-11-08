@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,21 +29,23 @@ import com.papaya.osiris.ui.theme.*
 
 @Composable
 fun TextInput(
-    label: String,
     text: String,
     placeholder: String,
     onTextChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    label: String? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(
-            text = label,
-            color = MediumGreen,
-            style = MaterialTheme.typography.labelLarge
-        )
+        if (!label.isNullOrBlank()) {
+            Text(
+                text = label,
+                color = MediumGreen,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
         OutlinedTextField(
             value = text,
             onValueChange = onTextChange,
@@ -275,6 +280,106 @@ fun TextAreaInput(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 100.dp)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectInput(
+    text: String,
+    onTextChange: (index: Int, String) -> Unit,
+    options: List<String>,
+) {
+    var exposed by rememberSaveable { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = exposed,
+        onExpandedChange = { exposed = it },
+    ) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = { },
+            readOnly = true,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Black,
+                cursorColor = Black,
+                focusedContainerColor = Gray,
+                unfocusedContainerColor = Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedTrailingIconColor = LightGreen,
+                unfocusedTrailingIconColor = LightGreen,
+            ),
+            textStyle = MaterialTheme.typography.labelSmall,
+            trailingIcon = {
+                Icon(imageVector = Icons.Filled.ExpandMore, contentDescription = null)
+            },
+            modifier = Modifier.fillMaxWidth().menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = exposed,
+            onDismissRequest = { exposed = false },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            options.forEachIndexed { index, it ->
+                DropdownMenuItem(
+                    onClick = {
+                        onTextChange(index, it)
+                        exposed = false
+                    },
+                    text = {
+                        Text(
+                            text = it,
+                            color = Black,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MultiInput(
+    label: String,
+    modifier: Modifier = Modifier,
+    actionAdd: () -> Unit,
+    actionRemove: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth().wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(
+            text = label,
+            color = MediumGreen,
+            style = MaterialTheme.typography.labelLarge
+        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            content()
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+        ) {
+            ThemedButton(
+                onClick = actionRemove,
+                theme = ButtonTheme.Wine,
+                icon = Icons.Filled.RemoveCircleOutline,
+            )
+            ThemedButton(
+                onClick = actionAdd,
+                theme = ButtonTheme.Light,
+                icon = Icons.Filled.AddCircleOutline,
+            )
+        }
     }
 }
 
