@@ -4,11 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,10 +17,11 @@ import com.papaya.osiris.ui.theme.White
 @Composable
 fun PancsPage() {
     var searchText by rememberSaveable { mutableStateOf("") }
+    var selectedItem by rememberSaveable { mutableIntStateOf(1) }
 
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks) },
+        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = Modifier.background(White)
     ) {

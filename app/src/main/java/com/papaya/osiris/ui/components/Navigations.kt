@@ -29,10 +29,10 @@ val userLinks: List<Link> = listOf(
 @Composable
 fun NavBar(
     links: List<Link>,
+    selectedItem: Int,
+    onSelectItem: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
-
     NavigationBar(
         containerColor = White,
         contentColor = DarkGreen,
@@ -42,7 +42,7 @@ fun NavBar(
         links.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = selectedItem == index,
-                onClick = { selectedItem = index },
+                onClick = { onSelectItem(index) },
                 icon = {
                     if(selectedItem == index) Icon(item.activeIcon, contentDescription = null)
                     else Icon(item.icon, contentDescription = null)
@@ -51,7 +51,7 @@ fun NavBar(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = DarkGreen,
                     unselectedIconColor = DarkGreen,
-                    indicatorColor = Gray,
+                    indicatorColor = White,
                     selectedTextColor = DarkGreen,
                     unselectedTextColor = DarkGreen
                 )
@@ -63,7 +63,13 @@ fun NavBar(
 @Preview(widthDp = 400, heightDp = 400)
 @Composable
 fun NavBarPreview() {
+    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
+
     OsirisTheme {
-        NavBar(userLinks)
+        NavBar(
+            links = userLinks,
+            selectedItem = selectedItem,
+            onSelectItem = { selectedItem = it }
+        )
     }
 }

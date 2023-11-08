@@ -52,10 +52,11 @@ fun RecipeFormPage(
     imageURL: String? = null,
 ) {
     val pancsOptions = listOf("PANC 1", "PANC 2", "PANC 3", "PANC 4", "PANC 5")
+    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
 
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks) },
+        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = modifier.background(White)
     ) {

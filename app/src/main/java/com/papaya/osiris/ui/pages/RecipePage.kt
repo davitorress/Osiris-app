@@ -11,11 +11,8 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,9 +39,11 @@ fun RecipePage(
     onFavoriteClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
+
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks) },
+        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = modifier.background(White)
     ) {
