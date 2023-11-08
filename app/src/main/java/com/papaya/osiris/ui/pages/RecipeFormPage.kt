@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.papaya.osiris.data.StringListState
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.*
 
