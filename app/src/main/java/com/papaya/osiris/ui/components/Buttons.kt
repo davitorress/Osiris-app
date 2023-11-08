@@ -1,6 +1,7 @@
 package com.papaya.osiris.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material3.*
@@ -26,6 +27,7 @@ fun ThemedButton(
     textModifier: Modifier = Modifier,
     text: String? = null,
     icon: ImageVector? = null,
+    circleShape: Boolean = false
 ) {
     val colors = when(theme) {
         ButtonTheme.Light -> {
@@ -51,9 +53,8 @@ fun ThemedButton(
     FilledIconButton(
         onClick = onClick,
         colors = colors,
-        shape = MaterialTheme.shapes.medium,
+        shape = if (circleShape) CircleShape else MaterialTheme.shapes.medium,
         modifier = modifier
-            .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
         Row(
