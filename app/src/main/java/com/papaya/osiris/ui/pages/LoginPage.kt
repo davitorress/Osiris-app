@@ -27,7 +27,10 @@ import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
 
 @Composable
-fun LoginPage() {
+fun LoginPage(
+    onClickLogin: () -> Unit,
+    onClickRegister: () -> Unit,
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var senha by rememberSaveable { mutableStateOf("") }
     var isFarmer by rememberSaveable { mutableStateOf(false) }
@@ -69,9 +72,10 @@ fun LoginPage() {
             }
 
             ThemedButton(
-                onClick = {  },
+                onClick = onClickLogin,
                 theme = ButtonTheme.Medium,
-                text = "Entrar"
+                text = "Entrar",
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(
@@ -85,7 +89,7 @@ fun LoginPage() {
                     style = MaterialTheme.typography.labelSmall
                 )
                 ThemedTextButton(
-                    onClick = {  },
+                    onClick = onClickRegister,
                     text = "Crie aqui",
                     theme = ButtonTheme.Wine,
                     modifier = Modifier,
@@ -101,6 +105,9 @@ fun LoginPage() {
 @Composable
 fun LoginPagePreview() {
     OsirisTheme {
-        LoginPage()
+        LoginPage(
+            onClickLogin = {},
+            onClickRegister = {}
+        )
     }
 }

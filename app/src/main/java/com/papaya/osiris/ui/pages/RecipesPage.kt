@@ -10,20 +10,23 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
 
 @Composable
-fun RecipesPage() {
+fun RecipesPage(
+    navController: NavHostController,
+) {
     var searchText by rememberSaveable { mutableStateOf("") }
-    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
 
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
+        bottomBar = { NavBar(navController) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = Modifier.background(White)
     ) {
@@ -67,6 +70,6 @@ fun RecipesPage() {
 @Composable
 fun RecipesPagePreview() {
     OsirisTheme {
-        RecipesPage()
+        RecipesPage(NavHostController(LocalContext.current))
     }
 }

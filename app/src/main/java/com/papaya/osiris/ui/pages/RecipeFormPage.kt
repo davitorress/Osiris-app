@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.papaya.osiris.ui.components.*
@@ -48,15 +49,15 @@ fun RecipeFormPage(
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
     onSaveImage: () -> Unit,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     imageURL: String? = null,
 ) {
     val pancsOptions = listOf("PANC 1", "PANC 2", "PANC 3", "PANC 4", "PANC 5")
-    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
 
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
+        bottomBar = { NavBar(navController) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = modifier.background(White)
     ) {
@@ -267,6 +268,7 @@ private fun RecipeFormPagePreview() {
             onSaveImage = {  },
             successButtonText = "Salvar",
             cancelButtonText = "Cancelar",
+            navController = NavHostController(LocalContext.current)
         )
     }
 }

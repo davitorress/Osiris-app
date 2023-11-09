@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.papaya.osiris.ui.components.*
@@ -38,13 +39,13 @@ fun PancPage(
     farming: List<String>,
     isFavorite: Boolean,
     onFavoriteClick: (Boolean) -> Unit,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
+    pancId: String? = null,
 ) {
-    var selectedItem by rememberSaveable { mutableIntStateOf(1) }
-
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
+        bottomBar = { NavBar(navController) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = modifier.background(White)
     ) {
@@ -175,7 +176,8 @@ fun PancPagePreview() {
                 "Durante o cultivo, é importante manter o solo úmido, mas não encharcado, para evitar o apodrecimento das raízes. O espinafre deve ser colhido quando as folhas atingirem o tamanho desejado, geralmente cerca de 6 a 8 semanas após a semeadura.",
             ),
             isFavorite = isFavorite,
-            onFavoriteClick = { isFavorite = it }
+            onFavoriteClick = { isFavorite = it },
+            navController = NavHostController(LocalContext.current)
         )
     }
 }

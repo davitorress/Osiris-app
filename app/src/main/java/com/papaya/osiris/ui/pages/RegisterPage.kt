@@ -27,7 +27,10 @@ import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
 
 @Composable
-fun RegisterPage() {
+fun RegisterPage(
+    onClickLogin: () -> Unit,
+    onClickRegister: () -> Unit,
+) {
     var nome by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var senha by rememberSaveable { mutableStateOf("") }
@@ -83,9 +86,10 @@ fun RegisterPage() {
             }
 
             ThemedButton(
-                onClick = {  },
+                onClick = onClickRegister,
                 theme = ButtonTheme.Medium,
-                text = "Cadastrar"
+                text = "Cadastrar",
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(
@@ -99,7 +103,7 @@ fun RegisterPage() {
                     style = MaterialTheme.typography.labelSmall
                 )
                 ThemedTextButton(
-                    onClick = {  },
+                    onClick = onClickLogin,
                     text = "Entre aqui",
                     theme = ButtonTheme.Wine,
                     modifier = Modifier,
@@ -115,6 +119,9 @@ fun RegisterPage() {
 @Composable
 fun RegisterPagePreview() {
     OsirisTheme {
-        RegisterPage()
+        RegisterPage(
+            onClickLogin = {},
+            onClickRegister = {}
+        )
     }
 }

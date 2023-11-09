@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.papaya.osiris.ui.components.*
@@ -37,13 +38,12 @@ fun RecipePage(
     prepair: List<String>,
     isFavorite: Boolean,
     onFavoriteClick: (Boolean) -> Unit,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    var selectedItem by rememberSaveable { mutableIntStateOf(2) }
-
     Scaffold(
         containerColor = White,
-        bottomBar = { NavBar(userLinks, selectedItem, { selectedItem = it }) },
+        bottomBar = { NavBar(navController) },
         contentWindowInsets = WindowInsets.navigationBars,
         modifier = modifier.background(White)
     ) {
@@ -219,7 +219,8 @@ private fun RecipePagePreview() {
                 "Agora é só servir! Bom apetite."
             ),
             isFavorite = isFavorite,
-            onFavoriteClick = { isFavorite = it }
+            onFavoriteClick = { isFavorite = it },
+            NavHostController(LocalContext.current)
         )
     }
 }
