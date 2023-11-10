@@ -13,7 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.papaya.osiris.data.AuthViewModel
+import com.papaya.osiris.data.Product
+import com.papaya.osiris.services.PancWebClient
+import com.papaya.osiris.services.RecipeWebClient
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
@@ -21,8 +26,27 @@ import com.papaya.osiris.ui.theme.White
 @Composable
 fun HomePage(
     navController: NavHostController,
+    authViewModel: AuthViewModel,
 ) {
+    val token by authViewModel.token.collectAsState()
     var searchText by rememberSaveable { mutableStateOf("") }
+    var pancs by rememberSaveable { mutableStateOf(listOf<Product>()) }
+    var recipes by rememberSaveable { mutableStateOf(listOf<Product>()) }
+
+    PancWebClient().list({ pancList ->
+        val productList = pancList.map {
+            Product(it.id, it.nome, it.imagem) { navController.navigate("panc/${it.id}") }
+        }
+        pancs = productList
+    })
+    token?.let {
+        RecipeWebClient().list(it, { recipeList ->
+            val productList = recipeList.map { recipe ->
+                Product(recipe.id, recipe.nome, recipe.imagem) { navController.navigate("recipe/${recipe.id}") }
+            }
+            recipes = productList
+        })
+    }
 
     Scaffold(
         containerColor = White,
@@ -48,19 +72,11 @@ fun HomePage(
                 )
                 CardsSection(
                     title = "PANCs",
-                    items = listOf(
-                        Product("Inhame", "https://picsum.photos/400"),
-                        Product("Vinagreira (Hibisco)", "https://picsum.photos/300"),
-                        Product("Ora-pro-nóbis", "https://picsum.photos/700"),
-                    )
+                    items = pancs
                 )
                 CardsSection(
                     title = "Receitas",
-                    items = listOf(
-                        Product("Sopa de cevadinha", "https://picsum.photos/400"),
-                        Product("Suco verde", "https://picsum.photos/300"),
-                        Product("Salada amarga", "https://picsum.photos/700"),
-                    )
+                    items = recipes
                 )
             }
         }
@@ -71,6 +87,6 @@ fun HomePage(
 @Composable
 fun HomePagePreview() {
     OsirisTheme {
-        HomePage(NavHostController(LocalContext.current))
+        HomePage(NavHostController(LocalContext.current), viewModel())
     }
 }

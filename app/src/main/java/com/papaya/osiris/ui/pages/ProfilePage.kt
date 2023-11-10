@@ -16,11 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.papaya.osiris.data.Product
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.*
 
@@ -129,36 +129,5 @@ fun ProfilePage(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 375)
-@Composable
-private fun ProfilePagePreview() {
-    OsirisTheme {
-        ProfilePage(
-            name = "João da Silva",
-            email = "joao@gmail.com",
-            pancs = listOf(
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-            ),
-            recipes = listOf(
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-            ),
-            myRecipes = listOf(
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-                Product("Inhame", "https://picsum.photos/86"),
-            ),
-            imageURL = "https://picsum.photos/128",
-            navController = NavHostController(LocalContext.current)
-        )
     }
 }

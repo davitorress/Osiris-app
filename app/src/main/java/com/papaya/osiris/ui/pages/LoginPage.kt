@@ -28,7 +28,7 @@ import com.papaya.osiris.ui.theme.White
 
 @Composable
 fun LoginPage(
-    onClickLogin: () -> Unit,
+    onClickLogin: (email: String, senha: String) -> Unit,
     onClickRegister: () -> Unit,
 ) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -72,7 +72,7 @@ fun LoginPage(
             }
 
             ThemedButton(
-                onClick = onClickLogin,
+                onClick = { onClickLogin(email, senha) },
                 theme = ButtonTheme.Medium,
                 text = "Entrar",
                 modifier = Modifier.fillMaxWidth()
@@ -105,9 +105,9 @@ fun LoginPage(
 @Composable
 fun LoginPagePreview() {
     OsirisTheme {
-        LoginPage(
-            onClickLogin = {},
-            onClickRegister = {}
-        )
+//        LoginPage(
+//            onClickLogin = {},
+//            onClickRegister = {}
+//        )
     }
 }
