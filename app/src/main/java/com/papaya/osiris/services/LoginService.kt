@@ -24,14 +24,14 @@ interface LoginService {
 }
 
 class LoginWebClient {
-    fun login(login: Login, success: (String) -> Unit, failure: () -> Unit = {}) {
+    fun login(login: Login, authViewModel: AuthViewModel, success: (String) -> Unit, failure: () -> Unit = {}) {
         val call = RetrofitInitializer().loginService().login(login)
         call.enqueue(object: Callback<TokenResponse?> {
             override fun onResponse(call: Call<TokenResponse?>?, response: Response<TokenResponse?>?) {
                 if (response?.isSuccessful == true) {
                     response.body()?.let {
                         success(it.token)
-                        AuthViewModel().saveToken(it.token)
+                        authViewModel.saveToken(it.token)
                     }
                 } else {
                     failure()

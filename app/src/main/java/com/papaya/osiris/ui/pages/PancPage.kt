@@ -12,36 +12,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.papaya.osiris.data.Panc
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.Black
 import com.papaya.osiris.ui.theme.Gray
-import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
 
 @Composable
 fun PancPage(
-    title: String,
-    imageURL: String,
-    description: String,
-    benefits: String,
-    farming: List<String>,
+    panc: Panc,
     isFavorite: Boolean,
     onFavoriteClick: (Boolean) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    pancId: String? = null,
 ) {
     Scaffold(
         containerColor = White,
@@ -58,7 +51,7 @@ fun PancPage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(PaddingValues(top = 44.dp, start = 22.dp, end = 22.dp))
+                    .padding(PaddingValues(top = 44.dp, start = 22.dp, end = 22.dp, bottom = 22.dp))
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.Start),
@@ -75,16 +68,16 @@ fun PancPage(
                     ) {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(imageURL)
+                                .data(panc.imagem)
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = title,
+                            contentDescription = panc.nome,
                             modifier = Modifier
                                 .width(128.dp)
                                 .height(132.dp)
                                 .clip(MaterialTheme.shapes.small),
                             placeholder = ColorPainter(Gray),
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Crop
                         )
                         ThemedTextButton(
                             text = if (isFavorite) "Favorito" else "Favoritar",
@@ -102,12 +95,12 @@ fun PancPage(
                             .wrapContentHeight()
                     ) {
                         Text(
-                            text = title,
+                            text = panc.nome,
                             color = Black,
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = description,
+                            text = panc.descricao,
                             color = Black,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -127,7 +120,7 @@ fun PancPage(
                         style = MaterialTheme.typography.titleSmall
                     )
                     Text(
-                        text = benefits,
+                        text = panc.beneficios,
                         color = Black,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -146,7 +139,7 @@ fun PancPage(
                         style = MaterialTheme.typography.titleSmall
                     )
 
-                    farming.forEach { item ->
+                    panc.cultivo.forEach { item ->
                         Text(
                             text = item,
                             color = Black,
@@ -156,28 +149,5 @@ fun PancPage(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 375)
-@Composable
-fun PancPagePreview() {
-    var isFavorite by rememberSaveable { mutableStateOf(false) }
-
-    OsirisTheme {
-        PancPage(
-            title = "Ora-pro-nóbis",
-            imageURL = "https://picsum.photos/126/132",
-            description = "A ora-pro-nóbis é um tipo de planta trepadeira altamente nutritiva: tem alto teor de proteínas, fibras, vitaminas e minerais importantes.",
-            benefits = "A ora-pro-nóbis, também conhecida como Pereskia aculeata, é uma planta valorizada por sua riqueza nutricional e versatilidade culinária. Rica em nutrientes essenciais, fibras e antioxidantes, ela oferece benefícios como melhoria da digestão, fortalecimento do sistema imunológico, redução da inflamação e contribuição para a saúde óssea. Sua inclusão na dieta pode promover uma alimentação equilibrada e saudável.",
-            farming = listOf(
-                "Para cultivá-lo, é importante escolher um local que receba bastante luz solar, mas também que tenha sombra parcial durante o dia.",
-                "As sementes podem ser plantadas diretamente no solo ou em recipientes, e devem ser mantidas úmidas até que as mudas surjam. O espaçamento entre as plantas deve ser de cerca de 15 a 20 cm para permitir o desenvolvimento adequado das folhas.",
-                "Durante o cultivo, é importante manter o solo úmido, mas não encharcado, para evitar o apodrecimento das raízes. O espinafre deve ser colhido quando as folhas atingirem o tamanho desejado, geralmente cerca de 6 a 8 semanas após a semeadura.",
-            ),
-            isFavorite = isFavorite,
-            onFavoriteClick = { isFavorite = it },
-            navController = NavHostController(LocalContext.current)
-        )
     }
 }

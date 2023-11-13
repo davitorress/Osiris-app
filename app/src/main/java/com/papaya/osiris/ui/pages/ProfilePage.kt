@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,19 +22,19 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.papaya.osiris.data.Product
+import com.papaya.osiris.data.User
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.*
 
 @Composable
 fun ProfilePage(
-    name: String,
-    email: String,
+    user: User,
     pancs: List<Product>,
     recipes: List<Product>,
     myRecipes: List<Product>,
+    onClickLogout: () -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    imageURL: String? = null,
 ) {
     Scaffold(
         containerColor = White,
@@ -66,10 +67,10 @@ fun ProfilePage(
                         Box(
                             contentAlignment = Alignment.Center,
                         ) {
-                            if (!imageURL.isNullOrEmpty()) {
+                            if (!user.imagem.isNullOrEmpty()) {
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(imageURL)
+                                        .data(user.imagem)
                                         .crossfade(true)
                                         .build(),
                                     contentDescription = null,
@@ -95,38 +96,61 @@ fun ProfilePage(
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = name,
+                        text = user.nome,
                         color = Black,
                         style = MaterialTheme.typography.titleLarge
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(
-                            imageVector = Icons.Filled.MailOutline,
-                            contentDescription = null,
-                            tint = MediumGreen,
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
-                        )
-                        Text(
-                            text = email,
-                            color = Black,
-                            style = MaterialTheme.typography.labelSmall
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.wrapContentSize()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.MailOutline,
+                                contentDescription = null,
+                                tint = MediumGreen,
+                                modifier = Modifier
+                                    .width(20.dp)
+                                    .height(20.dp)
+                            )
+                            Text(
+                                text = user.email,
+                                color = Black,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                        ThemedButton(
+                            onClick = onClickLogout,
+                            theme = ButtonTheme.Medium,
+                            text = "Sair",
+                            icon = Icons.Rounded.Logout,
+                            modifier = Modifier.padding(4.dp).fillMaxWidth(0.45f),
+                            textModifier = Modifier.padding(end = 2.dp)
                         )
                     }
                 }
-                CardsSection(
-                    title = "PANCs favoritas",
-                    items = pancs
-                )
-                CardsSection(
-                    title = "Receitas favoritas",
-                    items = recipes
-                )
-                CardsSection(
-                    title = "Minhas receitas",
-                    items = myRecipes
-                )
+                if (pancs.isNotEmpty()) {
+                    CardsSection(
+                        title = "PANCs favoritas",
+                        items = pancs
+                    )
+                }
+                if (recipes.isNotEmpty()) {
+                    CardsSection(
+                        title = "Receitas favoritas",
+                        items = recipes
+                    )
+                }
+                if (myRecipes.isNotEmpty()) {
+                    CardsSection(
+                        title = "Minhas receitas",
+                        items = myRecipes
+                    )
+                }
             }
         }
     }

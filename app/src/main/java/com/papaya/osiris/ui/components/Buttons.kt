@@ -58,12 +58,13 @@ fun ThemedButton(
             .padding(vertical = 4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             if (text !== null) {
                 Text(
                     text = text,
+                    maxLines = 1,
                     modifier = textModifier,
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -135,7 +136,8 @@ fun ButtonPreview() {
             text = "Button",
             onClick = {  },
             theme = ButtonTheme.Medium,
-            icon = Icons.Filled.AddCircleOutline
+            icon = Icons.Filled.AddCircleOutline,
+            modifier = Modifier.padding(4.dp).minimumInteractiveComponentSize(),
         )
     }
 }

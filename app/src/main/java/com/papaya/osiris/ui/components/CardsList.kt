@@ -1,5 +1,7 @@
 package com.papaya.osiris.ui.components
 
+import android.os.Parcelable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,11 +20,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.papaya.osiris.data.ClickAction
 import com.papaya.osiris.ui.theme.*
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Composable
 fun CardListItem(
@@ -30,6 +34,7 @@ fun CardListItem(
     imageURL: String,
     description: String,
     icon: ImageVector,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     ingredients: List<String>? = null,
 ) {
@@ -39,6 +44,7 @@ fun CardListItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable { onClick() }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -51,7 +57,7 @@ fun CardListItem(
                 .height(86.dp)
                 .clip(MaterialTheme.shapes.small),
             placeholder = ColorPainter(Gray),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Crop
         )
         Column(
             horizontalAlignment = Alignment.Start,
@@ -68,9 +74,9 @@ fun CardListItem(
                 Text(
                     text = title,
                     color = DarkGreen,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(end = 8.dp).fillMaxWidth(0.8f)
                 )
-                Spacer(Modifier.width(8.dp))
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
@@ -116,26 +122,33 @@ fun CardListItem(
     }
 }
 
-class Panc(var nome: String, var description: String, var isFavorite: Boolean, var image: String)
+@Parcelize
+class Panc(
+    var nome: String,
+    var description: String,
+    var isFavorite: Boolean,
+    var image: String,
+    val clickAction: @RawValue ClickAction
+): Parcelable
 
 @Composable
 fun PancsList(
     items: List<Panc>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 4.dp),
+    Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(24.dp),
         modifier = modifier.fillMaxWidth().wrapContentHeight()
     ) {
-        items(items = items) {panc ->
+        items.forEach { panc ->
             CardListItem(
                 title = panc.nome,
                 imageURL = panc.image,
                 description = panc.description,
                 icon = if (panc.isFavorite) Icons.Filled.Favorite
-                    else Icons.Filled.FavoriteBorder
+                    else Icons.Filled.FavoriteBorder,
+                onClick = { panc.clickAction.onClick() },
             )
         }
     }
@@ -161,28 +174,38 @@ fun PancsListSection(
     }
 }
 
-class Recipe(var nome: String, var description: String, var isFavorite: Boolean, var image: String, var ingredients: List<String>)
+@Parcelize
+class Recipe(
+    var nome: String,
+    var description: String,
+    var isFavorite: Boolean,
+    var image: String?,
+    var ingredients: List<String>,
+    val clickAction: @RawValue ClickAction
+): Parcelable
 
 @Composable
 fun RecipesList(
     items: List<Recipe>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 4.dp),
+    Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(24.dp),
         modifier = modifier.fillMaxWidth().wrapContentHeight()
     ) {
-        items(items = items) {recipe ->
-            CardListItem(
-                title = recipe.nome,
-                imageURL = recipe.image,
-                description = recipe.description,
-                ingredients = recipe.ingredients,
-                icon = if (recipe.isFavorite) Icons.Filled.Bookmark
+        items.forEach { recipe ->
+            recipe.image?.let {
+                CardListItem(
+                    title = recipe.nome,
+                    imageURL = it,
+                    description = recipe.description,
+                    ingredients = recipe.ingredients,
+                    icon = if (recipe.isFavorite) Icons.Filled.Bookmark
                     else Icons.Filled.BookmarkBorder,
-            )
+                    onClick = { recipe.clickAction.onClick() },
+                )
+            }
         }
     }
 }
@@ -204,49 +227,5 @@ fun RecipesListSection(
             style = MaterialTheme.typography.titleSmall
         )
         RecipesList(items)
-    }
-}
-
-@Preview(showBackground = true, widthDp = 300)
-@Composable
-fun CardListItemPreview() {
-    OsirisTheme {
-        CardListItem(
-            title = "Receita",
-            imageURL = "https://picsum.photos/86",
-            description = "A salada amarga é um acompanhamento simples com o foco de obter uma variedade de nutrientes.",
-            icon = Icons.Filled.Bookmark,
-            ingredients = listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 300)
-@Composable
-fun PancsListPreview() {
-    OsirisTheme {
-        PancsList(
-            listOf(
-                Panc("Inhame", "descrição", false, "https://picsum.photos/86"),
-                Panc("Inhame", "descrição", false, "https://picsum.photos/86"),
-                Panc("Inhame", "descrição", false, "https://picsum.photos/86"),
-                Panc("Inhame", "descrição", false, "https://picsum.photos/86"),
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 300)
-@Composable
-fun RecipesListPreview() {
-    OsirisTheme {
-        RecipesList(
-            listOf(
-                Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-            )
-        )
     }
 }

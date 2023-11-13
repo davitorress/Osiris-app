@@ -2,6 +2,8 @@ package com.papaya.osiris.ui.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.Scaffold
@@ -10,20 +12,21 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.papaya.osiris.services.RecipeWebClient
 import com.papaya.osiris.ui.components.*
-import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
 
 @Composable
 fun RecipesPage(
+    recipes: List<Recipe>,
+    searchItems: List<Recipe>,
+    searchText: String,
+    onSearchChange: (String) -> Unit,
+    onAddRecipe: () -> Unit,
     navController: NavHostController,
 ) {
-    var searchText by rememberSaveable { mutableStateOf("") }
-
     Scaffold(
         containerColor = White,
         bottomBar = { NavBar(navController) },
@@ -38,38 +41,33 @@ fun RecipesPage(
                 verticalArrangement = Arrangement.spacedBy(32.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(PaddingValues(top = 22.dp, start = 22.dp, end = 22.dp))
+                    .verticalScroll(rememberScrollState())
+                    .padding(PaddingValues(22.dp))
             ) {
                 SearchInput(
                     text = searchText,
                     placeholder = "Busque por receitas",
-                    onTextChange = { text -> searchText = text }
+                    onTextChange = { text -> onSearchChange(text) }
                 )
                 ThemedButton(
-                    onClick = {  },
+                    onClick = onAddRecipe,
                     theme = ButtonTheme.Medium,
                     text = "Postar uma receita",
                     icon = Icons.Rounded.AddCircleOutline,
+                    modifier = Modifier.fillMaxWidth(),
                     textModifier = Modifier.padding(end = 8.dp)
                 )
+                if (searchItems.isNotEmpty()) {
+                    RecipesListSection(
+                        title = "Receitas encontradas",
+                        items = searchItems
+                    )
+                }
                 RecipesListSection(
                     title = "Receitas",
-                    items = listOf(
-                        Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                        Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                        Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                        Recipe("Inhame", "descrição", false, "https://picsum.photos/86", listOf("Inhame", "Ora-pro-nóbis", "Hortelâ")),
-                    )
+                    items = recipes
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 500)
-@Composable
-fun RecipesPagePreview() {
-    OsirisTheme {
-        RecipesPage(NavHostController(LocalContext.current))
     }
 }

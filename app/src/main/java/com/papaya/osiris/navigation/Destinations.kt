@@ -32,7 +32,7 @@ object PancDestination: Destination {
         navArgument(pancIdArg) { type = NavType.StringType },
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "osiris://$route/{$pancIdArg}"},
+        navDeepLink { uriPattern = "android-app://androidx.navigation/$route/{$pancIdArg}"},
     )
 }
 
@@ -48,7 +48,7 @@ object RecipeDestination: Destination {
         navArgument(recipeIdArg) { type = NavType.StringType },
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "osiris://$route/{$recipeIdArg}"},
+        navDeepLink { uriPattern = "android-app://androidx.navigation/$route/{$recipeIdArg}"},
     )
 }
 
@@ -60,7 +60,7 @@ object RecipeFormDestination: Destination {
         navArgument(formIdArg) { type = NavType.StringType },
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "osiris://$route/{$formIdArg}"},
+        navDeepLink { uriPattern = "android-app://androidx.navigation/$route/{$formIdArg}"},
     )
 }
 
@@ -72,7 +72,7 @@ object ProfileDestination: Destination {
         navArgument(profileIdArg) { type = NavType.StringType },
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "osiris://$route/{$profileIdArg}"},
+        navDeepLink { uriPattern = "android-app://androidx.navigation/$route/{$profileIdArg}"},
     )
 }
 

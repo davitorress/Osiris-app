@@ -3,6 +3,7 @@ package com.papaya.osiris
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.papaya.osiris.navigation.OsirisNavHost
@@ -14,7 +15,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             OsirisTheme {
                 val navController: NavHostController = rememberNavController()
-                OsirisNavHost(navController)
+                val context = LocalContext.current
+                OsirisNavHost(navController, context)
             }
         }
     }

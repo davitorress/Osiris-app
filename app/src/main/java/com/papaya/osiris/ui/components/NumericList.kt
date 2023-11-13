@@ -21,7 +21,7 @@ fun NumericList(
         items.forEachIndexed {index, item ->
             Row(
                 modifier = Modifier.padding(4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top,
             ) {
                 Text(
                     text = "${index + 1}.",

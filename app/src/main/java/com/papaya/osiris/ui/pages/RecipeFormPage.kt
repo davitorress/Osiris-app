@@ -18,11 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.papaya.osiris.services.PancWebClient
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.*
 
@@ -48,12 +48,19 @@ fun RecipeFormPage(
     cancelButtonText: String,
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
-    onSaveImage: () -> Unit,
+    onEditImage: () -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     imageURL: String? = null,
 ) {
-    val pancsOptions = listOf("PANC 1", "PANC 2", "PANC 3", "PANC 4", "PANC 5")
+    var pancsOptions by rememberSaveable { mutableStateOf(listOf("")) }
+
+    PancWebClient().list({ pancList ->
+        val productList = pancList.map {
+            it.nome
+        }
+        pancsOptions = productList
+    })
 
     Scaffold(
         containerColor = White,
@@ -82,7 +89,7 @@ fun RecipeFormPage(
                         propagateMinConstraints = true
                     ) {
                         ThemedButton(
-                            onClick = onCancel,
+                            onClick = { navController.popBackStack() },
                             theme = ButtonTheme.Medium,
                             circleShape = true,
                             icon = Icons.Filled.KeyboardReturn,
@@ -112,7 +119,7 @@ fun RecipeFormPage(
                                         .height(128.dp)
                                         .clip(CircleShape),
                                     placeholder = ColorPainter(Gray),
-                                    contentScale = ContentScale.Fit
+                                    contentScale = ContentScale.Crop
                                 )
                             } else {
                                 Icon(
@@ -130,7 +137,7 @@ fun RecipeFormPage(
                             modifier = Modifier.align(Alignment.BottomEnd)
                         ) {
                             ThemedButton(
-                                onClick = onSaveImage,
+                                onClick = onEditImage,
                                 theme = ButtonTheme.Medium,
                                 circleShape = true,
                                 icon = Icons.Filled.Edit,
@@ -173,6 +180,7 @@ fun RecipeFormPage(
                         actionRemove = onRemovePanc,
                     ) {
                         pancs.forEachIndexed { index, panc ->
+                            panc.ifEmpty { onPancsChange(pancsOptions.first(), index) }
                             SelectInput(
                                 text = panc.ifEmpty { pancsOptions.first() },
                                 options = pancsOptions,
@@ -227,48 +235,5 @@ fun RecipeFormPage(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 375)
-@Composable
-private fun RecipeFormPagePreview() {
-    var name by rememberSaveable { mutableStateOf("") }
-    var description by rememberSaveable { mutableStateOf("") }
-    var pancs by rememberSaveable { mutableStateOf(listOf("")) }
-    var ingredients by rememberSaveable { mutableStateOf(listOf("")) }
-    var prepair by rememberSaveable { mutableStateOf(listOf("")) }
-
-    OsirisTheme {
-        RecipeFormPage(
-            name = name,
-            onNameChange = { name = it },
-            description = description,
-            onDescriptionChange = { description = it },
-            pancs = pancs,
-            onPancsChange = { panc, index ->
-                pancs = pancs.toMutableList().apply { set(index, panc) }
-            },
-            onAddPanc = { pancs = pancs.toMutableList().apply { add("") } },
-            onRemovePanc = { pancs = pancs.toMutableList().apply { removeLast() } },
-            ingredients = ingredients,
-            onIngredientsChange = { ingredient, index ->
-                ingredients = ingredients.toMutableList().apply { set(index, ingredient) }
-            },
-            onAddIngredients = { ingredients = ingredients.toMutableList().apply { add("") } },
-            onRemoveIngredients = { ingredients = ingredients.toMutableList().apply { removeLast() } },
-            prepair = prepair,
-            onPrepairChange = { step, index ->
-                prepair = prepair.toMutableList().apply { set(index, step) }
-            },
-            onAddPrepair = { prepair = prepair.toMutableList().apply { add("") } },
-            onRemovePrepair = { prepair = prepair.toMutableList().apply { removeLast() } },
-            onSuccess = {  },
-            onCancel = {  },
-            onSaveImage = {  },
-            successButtonText = "Salvar",
-            cancelButtonText = "Cancelar",
-            navController = NavHostController(LocalContext.current)
-        )
     }
 }

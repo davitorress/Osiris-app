@@ -69,7 +69,7 @@ fun CardsCarousel(
             CardItem(
                 title = item.name,
                 imageURL = item.image,
-                modifier = Modifier.clickable { item.onClick() }
+                modifier = Modifier.clickable { item.clickAction.onClick() }
             )
         }
     }
