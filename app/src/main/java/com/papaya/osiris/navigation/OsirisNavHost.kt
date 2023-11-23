@@ -374,10 +374,10 @@ fun OsirisNavHost(
                                     fileImage!!.name,
                                     fileImage.asRequestBody()
                                 ), {
-                                    navController.navigateComplete(RecipesDestination.route)
+                                    navController.navigateComplete("${RecipeDestination.route}/${created.id}")
                                 }, {
                                     Log.e("RecipeWebClient.updateImage()", "failure")
-                                    navController.navigateComplete(RecipesDestination.route)
+                                    navController.navigateComplete("${RecipeDestination.route}/${created.id}")
                                 }
                             )
                         }, {
