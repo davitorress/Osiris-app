@@ -1,0 +1,15 @@
+{
+  "name": "osiris-app",
+  "version": "1.0.0",
+  "description": "Script para gerar network_security_config.xml com endereço IP",
+  "main": "osiris.js",
+  "scripts": {
+    "start": "node osiris.js"
+  },
+  "author": "mfelipegs",
+  "license": "ISC",
+  "dependencies": {
+    "xml2js": "^0.4.23",
+    "dotenv": "^10.0.0"
+  }
+}

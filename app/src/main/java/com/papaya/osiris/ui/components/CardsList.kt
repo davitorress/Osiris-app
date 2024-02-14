@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -86,7 +87,9 @@ fun CardListItem(
             Text(
                 text = description,
                 color = Black,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 3,
             )
             if (!ingredients.isNullOrEmpty()) {
                 LazyRow(
