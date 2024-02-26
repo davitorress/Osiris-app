@@ -37,8 +37,6 @@ if (ipAddress) {
         domain: [
           { $: { includeSubdomains: "true" }, _: "127.0.0.1" },
           { $: { includeSubdomains: "true" }, _: "localhost" },
-          { $: { includeSubdomains: "true" }, _: "192.168.1.67" },
-          { $: { includeSubdomains: "true" }, _: "192.168.1.233" },
           { $: { includeSubdomains: "true" }, _: "res.cloudinary.com" },
           { $: { includeSubdomains: "true" }, _: ipAddress },
         ],
@@ -51,15 +49,39 @@ if (ipAddress) {
 
   // Troque para o seu path
   const filePath =
-    "C:/projects/Osiris-app/app/src/main/res/xml/network_security_config.xml";
+  "app/src/main/res/xml/network_security_config.xml";
 
+  const filePathEnv =
+    "app/src/main/assets/env";
+
+  console.log(filePath);
+
+  console.log(`
+     _____       _        _      
+    |  _  |     (_)      (_)     
+    | | | | ___  _  _ __  _  ___ 
+    | | | |/ __|| || '__|| |/ __|
+    \\ \\_/ /\\__ \\| || |   | |\\__ \\
+     \\___/ |___/|_||_|   |_||___/
+                                   
+    `);
   console.log("Configuração de IP para o aplicativo Osiris");
+  console.log("\n");
   console.log("################################");
+  console.log("\n");
 
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
     console.log(`Arquivo ${filePath} anterior deletado.`);
   }
+
+  fs.writeFile(filePathEnv, ipAddress, (err) => {
+    if(err) {
+      console.error(err);
+      return;
+    }
+    console.log(`Arquivo da Env em ${filePath} gerado com sucesso.`);
+  });
 
   fs.writeFile(filePath, xml, (err) => {
     if (err) {
