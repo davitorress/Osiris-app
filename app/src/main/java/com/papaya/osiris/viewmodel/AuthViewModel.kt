@@ -1,29 +1,32 @@
-package com.papaya.osiris.data
+package com.papaya.osiris.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.viewModelScope
+import com.papaya.osiris.repository.LoginRepository
+import com.papaya.osiris.utils.decryptToken
+import kotlinx.coroutines.launch
 
 class AuthViewModel: ViewModel() {
-    private val _token = MutableStateFlow<String?>(null)
-    val token: StateFlow<String?> = _token
+    private val loginRepository = LoginRepository()
 
-    val userId: String
-        get() {
-            val tokenValue = token.value
-            val key = Keys.hmacShaKeyFor("b2C4y9t8v7r6u5i4o3p2q1a0z9x8w7v6u5i4o3p2q1a0".toByteArray())
-            val claims = Jwts.parser().verifyWith(key)
-                .build().parseSignedClaims(tokenValue).payload
-            return claims["id"] as? String ?: ""
+    private val _token = MutableLiveData<String?>(null)
+    val token: LiveData<String?> = _token
+
+    val userId: String?
+        get() = token.value?.let { decryptToken(it) }
+
+    fun login(email: String, password: String, success: suspend (String) -> Unit, failure: suspend () -> Unit = {}) {
+        viewModelScope.launch {
+            try {
+                _token.value = loginRepository.login(email, password).execute().body()?.token
+                _token.value?.let { success(it) }
+            } catch (e: RuntimeException) {
+                Log.e("login error", e.message ?: "unknown error")
+                failure()
+            }
         }
-
-    fun saveToken(token: String) {
-        _token.value = token
-    }
-
-    fun clearToken() {
-        _token.value = null
     }
 }

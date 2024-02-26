@@ -1,10 +1,6 @@
-package com.papaya.osiris.data
+package com.papaya.osiris.services
 
 import com.google.gson.GsonBuilder
-import com.papaya.osiris.services.LoginService
-import com.papaya.osiris.services.PancService
-import com.papaya.osiris.services.RecipeService
-import com.papaya.osiris.services.UserService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
