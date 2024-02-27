@@ -20,20 +20,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.papaya.osiris.R
+import com.papaya.osiris.navigation.HomeDestination
+import com.papaya.osiris.navigation.RegisterDestination
+import com.papaya.osiris.navigation.navigateComplete
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.MediumGreen
 import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.viewmodel.AuthViewModel
 
 @Composable
 fun LoginPage(
-    onClickLogin: (email: String, senha: String) -> Unit,
-    onClickRegister: () -> Unit,
+    navController: NavHostController,
+    viewModel: AuthViewModel,
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var senha by rememberSaveable { mutableStateOf("") }
     var isFarmer by rememberSaveable { mutableStateOf(false) }
+
+    val loginFn = { email: String, senha: String ->
+        viewModel.login(email, password = senha, {
+            navController.navigateComplete(HomeDestination.route)
+        }, {
+            // TODO: handle login error
+        })
+    }
 
     Surface(
         modifier = Modifier
@@ -72,7 +85,7 @@ fun LoginPage(
             }
 
             ThemedButton(
-                onClick = { onClickLogin(email, senha) },
+                onClick = { loginFn(email, senha) },
                 theme = ButtonTheme.Medium,
                 text = "Entrar",
                 modifier = Modifier.fillMaxWidth()
@@ -89,7 +102,7 @@ fun LoginPage(
                     style = MaterialTheme.typography.labelSmall
                 )
                 ThemedTextButton(
-                    onClick = onClickRegister,
+                    onClick = { navController.navigateComplete(RegisterDestination.route) },
                     text = "Crie aqui",
                     theme = ButtonTheme.Wine,
                     modifier = Modifier,

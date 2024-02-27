@@ -7,26 +7,37 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.papaya.osiris.data.AuthViewModel
-import com.papaya.osiris.data.Product
+import com.papaya.osiris.navigation.PancDestination
+import com.papaya.osiris.navigation.RecipeDestination
+import com.papaya.osiris.navigation.navigateComplete
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.utils.convertToProduct
+import com.papaya.osiris.viewmodel.PancViewModel
+import com.papaya.osiris.viewmodel.RecipeViewModel
 
 @Composable
 fun HomePage(
-    pancs: List<Product>,
-    recipes: List<Product>,
-    searchItems: List<Panc>,
-    searchText: String,
-    onSearchChange: (String) -> Unit,
     navController: NavHostController,
-    authViewModel: AuthViewModel,
+    pancViewModel: PancViewModel,
+    recipeViewModel: RecipeViewModel,
 ) {
+    val pancs by pancViewModel.pancs.observeAsState(null)
+    val recipes by recipeViewModel.recipes.observeAsState(null)
+
+    var search by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        pancViewModel.fetch({})
+        recipeViewModel.fetch({})
+    }
+
     Scaffold(
         containerColor = White,
         bottomBar = { NavBar(navController) },
@@ -45,24 +56,44 @@ fun HomePage(
                     .padding(PaddingValues(22.dp))
             ) {
                 SearchInput(
-                    text = searchText,
+                    text = search,
                     placeholder = "Busque por plantas ou receitas",
-                    onTextChange = { text -> onSearchChange(text) }
+                    onTextChange = { text -> search = text },
                 )
-                if (searchItems.isNotEmpty()) {
-                    PancsListSection(
-                        title = "PANCs encontradas",
-                        items = searchItems
+
+                // TODO: implement search items section for recipes and pancs
+//                if (search.isNotEmpty()) {
+//                   PancsListSection(
+//                        title = "PANCs encontradas",
+//                        items = searchItems
+//                    )
+//                }
+
+                pancs?.let { pancList ->
+                    val items = pancList.map { panc ->
+                        convertToProduct(panc = panc) {
+                            navController.navigateComplete("${PancDestination.route}/${panc.id}")
+                        }
+                    }
+
+                    CardsSection(
+                        title = "PANCs",
+                        items = items
                     )
                 }
-                CardsSection(
-                    title = "PANCs",
-                    items = pancs
-                )
-                CardsSection(
-                    title = "Receitas",
-                    items = recipes
-                )
+
+                recipes?.let { recipeList ->
+                    val items = recipeList.map { recipe ->
+                        convertToProduct(recipe = recipe) {
+                            navController.navigateComplete("${RecipeDestination.route}/${recipe.id}")
+                        }
+                    }
+
+                    CardsSection(
+                        title = "Receitas",
+                        items = items
+                    )
+                }
             }
         }
     }

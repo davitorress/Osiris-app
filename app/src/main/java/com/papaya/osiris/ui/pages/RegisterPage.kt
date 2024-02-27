@@ -20,22 +20,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.papaya.osiris.R
+import com.papaya.osiris.navigation.LoginDestination
+import com.papaya.osiris.navigation.navigateComplete
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.MediumGreen
 import com.papaya.osiris.ui.theme.OsirisTheme
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterPage(
-    onClickLogin: () -> Unit,
-    onClickRegister: () -> Unit,
+    navController: NavHostController,
+    viewModel: AuthViewModel,
 ) {
     var nome by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var senha by rememberSaveable { mutableStateOf("") }
     var confirmarSenha by rememberSaveable { mutableStateOf("") }
     var isFarmer by rememberSaveable { mutableStateOf(false) }
+
+    val registerFn = { nome: String, email: String, senha: String, confirmarSenha: String, isFarmer: Boolean ->
+        // TODO: implement register function
+    }
 
     Surface(
         modifier = Modifier
@@ -86,7 +94,7 @@ fun RegisterPage(
             }
 
             ThemedButton(
-                onClick = onClickRegister,
+                onClick = { registerFn(nome, email, senha, confirmarSenha, isFarmer) },
                 theme = ButtonTheme.Medium,
                 text = "Cadastrar",
                 modifier = Modifier.fillMaxWidth()
@@ -103,7 +111,7 @@ fun RegisterPage(
                     style = MaterialTheme.typography.labelSmall
                 )
                 ThemedTextButton(
-                    onClick = onClickLogin,
+                    onClick = { navController.navigateComplete(LoginDestination.route) },
                     text = "Entre aqui",
                     theme = ButtonTheme.Wine,
                     modifier = Modifier,
@@ -119,9 +127,9 @@ fun RegisterPage(
 @Composable
 fun RegisterPagePreview() {
     OsirisTheme {
-        RegisterPage(
-            onClickLogin = {},
-            onClickRegister = {}
-        )
+//        RegisterPage(
+//            onClickLogin = {},
+//            onClickRegister = {}
+//        )
     }
 }
