@@ -10,5 +10,7 @@ data class Product(
     val id: String,
     val name: String,
     val image: String,
+    val description: String? = null,
+    val isFavorite: Boolean = false,
     val clickAction: @RawValue ClickAction
 ) : Parcelable
