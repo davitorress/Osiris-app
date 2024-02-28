@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,36 +59,11 @@ fun OsirisNavHost(
             )
         }
         composable(route = PancsDestination.route) {
-            var searchText by rememberSaveable { mutableStateOf("") }
-            var pancs by rememberSaveable { mutableStateOf(listOf<com.papaya.osiris.ui.components.Panc>()) }
-            var searchItems by rememberSaveable { mutableStateOf(listOf<com.papaya.osiris.ui.components.Panc>()) }
-
-            PancWebClient().list({ pancList ->
-                val productList = pancList.map {
-                    com.papaya.osiris.ui.components.Panc(it.nome, it.descricao, false, it.imagem, ClickActionImpl {
-                        navController.navigateComplete("${PancDestination.route}/${it.id}")
-                    })
-                }
-                pancs = productList
-
-                if (searchText.isNotBlank()) {
-                    val searchList = pancList.filter {
-                        it.nome.contains(searchText, ignoreCase = true)
-                    }.map {
-                        com.papaya.osiris.ui.components.Panc(it.nome, it.descricao, false, it.imagem, ClickActionImpl {
-                            navController.navigateComplete("${PancDestination.route}/${it.id}")
-                        })
-                    }
-                    searchItems = searchList
-                }
-            })
-
             PancsPage(
-                pancs = pancs,
-                searchItems = searchItems,
-                searchText = searchText,
-                onSearchChange = { searchText = it },
                 navController = navController,
+                pancViewModel = pancViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
             )
         }
         composable(
@@ -95,74 +71,25 @@ fun OsirisNavHost(
             arguments = PancDestination.arguments,
             deepLinks = PancDestination.deepLinks,
         ) {
-            var isFavorite by rememberSaveable { mutableStateOf(false) }
             val pancId = it.arguments?.getString(PancDestination.pancIdArg)
-            var panc by rememberSaveable { mutableStateOf<Panc?>(null) }
 
-            PancWebClient().get(pancId!!, { res ->
-                panc = res
-            }, {
-                Log.e("PancWebClient.get()", "failure")
-                navController.navigateComplete(PancsDestination.route)
-            })
-
-            panc?.let { pancData ->
+            if (pancId.isNullOrBlank()) navController.navigateComplete(PancsDestination.route)
+            else {
                 PancPage(
-                    panc = pancData,
-                    isFavorite = isFavorite,
-                    onFavoriteClick = { bool -> isFavorite = bool },
                     navController = navController,
+                    pancViewModel = pancViewModel,
+                    authViewModel = authViewModel,
+                    userViewModel = userViewModel,
+                    pancId = pancId,
                 )
             }
         }
         composable(route = RecipesDestination.route) {
-            var searchText by rememberSaveable { mutableStateOf("") }
-            var recipes by rememberSaveable { mutableStateOf(listOf<com.papaya.osiris.ui.components.Recipe>()) }
-            var searchItems by rememberSaveable { mutableStateOf(listOf<com.papaya.osiris.ui.components.Recipe>()) }
-
-            RecipeWebClient().list({ recipeList ->
-                val productList = recipeList.map {
-                    com.papaya.osiris.ui.components.Recipe(
-                        it.nome,
-                        it.descricao,
-                        false,
-                        it.imagem ?: "",
-                        it.pancs,
-                        ClickActionImpl {
-                            navController.navigateComplete("${RecipeDestination.route}/${it.id}")
-                        }
-                    )
-                }
-                recipes = productList
-
-                if (searchText.isNotBlank()) {
-                    val searchList = recipeList.filter {
-                        it.nome.contains(searchText, ignoreCase = true)
-                    }.map {
-                        com.papaya.osiris.ui.components.Recipe(
-                            it.nome,
-                            it.descricao,
-                            false,
-                            it.imagem ?: "",
-                            it.pancs,
-                            ClickActionImpl {
-                                navController.navigateComplete("${RecipeDestination.route}/${it.id}")
-                            }
-                        )
-                    }
-                    searchItems = searchList
-                }
-            })
-
             RecipesPage(
-                recipes = recipes,
-                searchItems = searchItems,
-                searchText = searchText,
-                onSearchChange = { searchText = it },
-                onAddRecipe = {
-                    navController.navigateComplete("${RecipeFormDestination.route}/new")
-                },
                 navController = navController,
+                recipeViewModel = recipeViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
             )
         }
         composable(
@@ -170,84 +97,27 @@ fun OsirisNavHost(
             arguments = RecipeDestination.arguments,
             deepLinks = RecipeDestination.deepLinks,
         ) {
-            var isFavorite by rememberSaveable { mutableStateOf(false) }
             val recipeId = it.arguments?.getString(RecipeDestination.recipeIdArg)
-            var recipe by rememberSaveable { mutableStateOf<Recipe?>(null) }
 
-            RecipeWebClient().get(recipeId!!, { res ->
-                recipe = res
-            }, {
-                Log.e("RecipeWebClient.get()", "failure")
-                navController.navigateComplete(RecipesDestination.route)
-            })
-
-            recipe?.let { recipeData ->
+            if (recipeId.isNullOrBlank()) navController.navigateComplete(RecipesDestination.route)
+            else {
                 RecipePage(
-                    recipe = recipeData,
-                    isFavorite = isFavorite,
-                    onFavoriteClick = { bool -> isFavorite = bool },
                     navController = navController,
+                    recipeViewModel = recipeViewModel,
+                    authViewModel = authViewModel,
+                    userViewModel = userViewModel,
+                    recipeId = recipeId,
                 )
             }
         }
         composable(route = ProfileDestination.route) {
-            var user by rememberSaveable { mutableStateOf<User?>(null) }
-            var pancs by rememberSaveable { mutableStateOf(listOf<Product>()) }
-            var recipes by rememberSaveable { mutableStateOf(listOf<Product>()) }
-            var myRecipes by rememberSaveable { mutableStateOf(listOf<Product>()) }
-            val token by authViewModel.token.collectAsState()
-
-            UserWebClient().get(token!!, authViewModel.userId, { res ->
-                user = res
-            }, {
-                Log.e("UserWebClient.get()", "failure")
-                navController.navigateComplete(LoginDestination.route)
-            })
-
-            user?.let { userData ->
-                PancWebClient().list({ pancList ->
-                    val productList = pancList.filter { item ->
-                        item.id in userData.pancsFavoritasId
-                    }.map { panc ->
-                        Product(panc.nome, panc.nome, panc.imagem, ClickActionImpl {
-                            navController.navigateComplete("${PancDestination.route}/${panc.id}")
-                        })
-                    }
-                    pancs = productList
-                })
-                RecipeWebClient().list({ recipeList ->
-                    val productList = recipeList.filter { item ->
-                        item.id in userData.receitasSalvasId
-                    }.map { recipe ->
-                        Product(recipe.nome, recipe.nome, recipe.imagem, ClickActionImpl {
-                            navController.navigateComplete("${RecipeDestination.route}/${recipe.id}")
-                        })
-                    }
-                    recipes = productList
-
-                    val myProductList = recipeList.filter { item ->
-                        item.usuarioId == userData.id
-                    }.map { recipe ->
-                        Product(recipe.nome, recipe.nome, recipe.imagem, ClickActionImpl {
-                            navController.navigateComplete("${RecipeFormDestination.route}/${recipe.id}")
-                        })
-                    }
-                    myRecipes = myProductList
-                })
-            }
-
-            user?.let { userData ->
-                ProfilePage(
-                    user = userData,
-                    pancs = pancs,
-                    recipes = recipes,
-                    myRecipes = myRecipes,
-                    onClickLogout = {
-                        navController.navigateComplete(LoginDestination.route)
-                    },
-                    navController = navController,
-                )
-            }
+            ProfilePage(
+                navController = navController,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                pancViewModel = pancViewModel,
+                recipeViewModel = recipeViewModel,
+            )
         }
         composable(
             route = RecipeFormDestination.route,

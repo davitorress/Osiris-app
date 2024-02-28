@@ -7,21 +7,39 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.viewmodel.AuthViewModel
+import com.papaya.osiris.viewmodel.PancViewModel
+import com.papaya.osiris.viewmodel.UserViewModel
 
 @Composable
 fun PancsPage(
-    pancs: List<Panc>,
-    searchItems: List<Panc>,
-    searchText: String,
-    onSearchChange: (String) -> Unit,
     navController: NavHostController,
+    pancViewModel: PancViewModel,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
 ) {
+    val userId = authViewModel.userId
+    val token by authViewModel.token.observeAsState()
+    val user by userViewModel.user.observeAsState(null)
+    val pancs by pancViewModel.pancs.observeAsState(null)
+
+    var search by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        userId?.let { userViewModel.fetch(token!!, userId, {}) }
+        pancViewModel.fetch({})
+    }
+
+    // TODO: Implement conversion of pancs to have isFavorite property
+
     Scaffold(
         containerColor = White,
         bottomBar = { NavBar(navController) },
@@ -40,20 +58,28 @@ fun PancsPage(
                     .padding(PaddingValues(22.dp))
             ) {
                 SearchInput(
-                    text = searchText,
+                    text = search,
                     placeholder = "Busque por pancs",
-                    onTextChange = { text -> onSearchChange(text) }
+                    onTextChange = { text -> search = text }
                 )
-                if (searchItems.isNotEmpty()) {
-                    PancsListSection(
-                        title = "PANCs encontradas",
-                        items = searchItems
-                    )
-                }
-                PancsListSection(
-                    title = "PANCs",
-                    items = pancs
-                )
+
+                // TODO: Implement search
+//                if (search.isNotBlank()) {
+//                    val searchItems = pancs?.filter { panc -> panc.nome.contains(search, ignoreCase = true) }
+//
+//                    searchItems?.let {
+//                        PancsListSection(
+//                            title = "PANCs encontradas",
+//                            items = searchItems
+//                        )
+//                    }
+//                }
+
+                // TODO: Implement pancs list section
+//                PancsListSection(
+//                    title = "PANCs",
+//                    items = pancs
+//                )
             }
         }
     }

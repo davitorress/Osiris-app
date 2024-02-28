@@ -9,24 +9,41 @@ import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.papaya.osiris.services.RecipeWebClient
+import com.papaya.osiris.navigation.RecipeFormDestination
+import com.papaya.osiris.navigation.navigateComplete
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.viewmodel.AuthViewModel
+import com.papaya.osiris.viewmodel.RecipeViewModel
+import com.papaya.osiris.viewmodel.UserViewModel
 
 @Composable
 fun RecipesPage(
-    recipes: List<Recipe>,
-    searchItems: List<Recipe>,
-    searchText: String,
-    onSearchChange: (String) -> Unit,
-    onAddRecipe: () -> Unit,
     navController: NavHostController,
+    recipeViewModel: RecipeViewModel,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
 ) {
+    val userId = authViewModel.userId
+    val token by authViewModel.token.observeAsState()
+    val user by userViewModel.user.observeAsState(null)
+    val recipes by recipeViewModel.recipes.observeAsState(null)
+
+    var search by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        userId?.let { userViewModel.fetch(token!!, userId, {}) }
+        recipeViewModel.fetch({})
+    }
+
+    // TODO: Implement conversion of recipes to have isFavorite property
+
     Scaffold(
         containerColor = White,
         bottomBar = { NavBar(navController) },
@@ -45,28 +62,37 @@ fun RecipesPage(
                     .padding(PaddingValues(22.dp))
             ) {
                 SearchInput(
-                    text = searchText,
+                    text = search,
                     placeholder = "Busque por receitas",
-                    onTextChange = { text -> onSearchChange(text) }
+                    onTextChange = { text -> search = text }
                 )
+
                 ThemedButton(
-                    onClick = onAddRecipe,
+                    onClick = { navController.navigateComplete("${RecipeFormDestination.route}/new")},
                     theme = ButtonTheme.Medium,
                     text = "Postar uma receita",
                     icon = Icons.Rounded.AddCircleOutline,
                     modifier = Modifier.fillMaxWidth(),
                     textModifier = Modifier.padding(end = 8.dp)
                 )
-                if (searchItems.isNotEmpty()) {
-                    RecipesListSection(
-                        title = "Receitas encontradas",
-                        items = searchItems
-                    )
-                }
-                RecipesListSection(
-                    title = "Receitas",
-                    items = recipes
-                )
+
+                // TODO: Implement search
+//                if (search.isNotBlank()) {
+//                    val searchItems = recipes?.filter { recipe -> recipe.nome.contains(search, ignoreCase = true) }
+//
+//                    searchItems?.let {
+//                        RecipesListSection(
+//                            title = "Receitas encontradas",
+//                            items = searchItems
+//                        )
+//                    }
+//                }
+
+                // TODO: Implement recipes list section
+//                RecipesListSection(
+//                    title = "Receitas",
+//                    items = recipes
+//                )
             }
         }
     }

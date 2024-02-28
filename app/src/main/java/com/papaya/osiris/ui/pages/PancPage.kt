@@ -12,6 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,24 +25,40 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.papaya.osiris.data.Panc
+import com.papaya.osiris.navigation.LoginDestination
+import com.papaya.osiris.navigation.navigateComplete
 import com.papaya.osiris.ui.components.*
 import com.papaya.osiris.ui.theme.Black
 import com.papaya.osiris.ui.theme.Gray
 import com.papaya.osiris.ui.theme.White
+import com.papaya.osiris.viewmodel.AuthViewModel
+import com.papaya.osiris.viewmodel.PancViewModel
+import com.papaya.osiris.viewmodel.UserViewModel
 
 @Composable
 fun PancPage(
-    panc: Panc,
-    isFavorite: Boolean,
-    onFavoriteClick: (Boolean) -> Unit,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
+    pancViewModel: PancViewModel,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
+    pancId: String,
 ) {
+    val userId = authViewModel.userId
+    val token by authViewModel.token.observeAsState()
+    val user by userViewModel.user.observeAsState(null)
+
+    var panc by rememberSaveable { mutableStateOf<Panc?>(null) }
+
+    LaunchedEffect(Unit) {
+        userId?.let { userViewModel.fetch(token!!, userId, {}) }
+        pancViewModel.get(pancId, { panc = it })
+    }
+
     Scaffold(
         containerColor = White,
         bottomBar = { NavBar(navController) },
         contentWindowInsets = WindowInsets.navigationBars,
-        modifier = modifier.background(White)
+        modifier = Modifier.background(White)
     ) {
         Surface(
             modifier = Modifier.padding(it)
@@ -53,37 +71,79 @@ fun PancPage(
                     .verticalScroll(rememberScrollState())
                     .padding(PaddingValues(top = 44.dp, start = 22.dp, end = 22.dp, bottom = 22.dp))
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.Start),
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
+                panc?.let { p ->
+                    val isFavorite = user?.pancsFavoritasId?.contains(p.id) ?: false
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.Start),
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                            horizontalAlignment = Alignment.Start,
+                            modifier = Modifier
+                                .wrapContentSize()
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(p.imagem)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = p.nome,
+                                modifier = Modifier
+                                    .width(128.dp)
+                                    .height(132.dp)
+                                    .clip(MaterialTheme.shapes.small),
+                                placeholder = ColorPainter(Gray),
+                                contentScale = ContentScale.Crop
+                            )
+                            ThemedTextButton(
+                                text = if (isFavorite) "Favorito" else "Favoritar",
+                                theme = ButtonTheme.Medium,
+                                onClick = { /* TODO: Implement favorite function */ },
+                                icon = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
+                            )
+                        }
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
+                            horizontalAlignment = Alignment.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Text(
+                                text = p.nome,
+                                color = Black,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = p.descricao,
+                                color = Black,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                         horizontalAlignment = Alignment.Start,
                         modifier = Modifier
-                            .wrapContentSize()
+                            .fillMaxWidth()
+                            .wrapContentHeight()
                     ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(panc.imagem)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = panc.nome,
-                            modifier = Modifier
-                                .width(128.dp)
-                                .height(132.dp)
-                                .clip(MaterialTheme.shapes.small),
-                            placeholder = ColorPainter(Gray),
-                            contentScale = ContentScale.Crop
+                        Text(
+                            text = "Benefícios",
+                            color = Black,
+                            style = MaterialTheme.typography.titleSmall
                         )
-                        ThemedTextButton(
-                            text = if (isFavorite) "Favorito" else "Favoritar",
-                            theme = ButtonTheme.Medium,
-                            onClick = { onFavoriteClick(!isFavorite) },
-                            icon = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
+                        Text(
+                            text = p.beneficios,
+                            color = Black,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
 
@@ -95,56 +155,18 @@ fun PancPage(
                             .wrapContentHeight()
                     ) {
                         Text(
-                            text = panc.nome,
+                            text = "Modo de Cultivo",
                             color = Black,
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleSmall
                         )
-                        Text(
-                            text = panc.descricao,
-                            color = Black,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Text(
-                        text = "Benefícios",
-                        color = Black,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(
-                        text = panc.beneficios,
-                        color = Black,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Text(
-                        text = "Modo de Cultivo",
-                        color = Black,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-
-                    panc.cultivo.forEach { item ->
-                        Text(
-                            text = item,
-                            color = Black,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        p.cultivo.forEach { item ->
+                            Text(
+                                text = item,
+                                color = Black,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
             }
